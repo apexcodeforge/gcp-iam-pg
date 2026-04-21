@@ -22,7 +22,7 @@ public final class App {
             Instant deadline = start.plus(TOTAL);
             int iteration = 0;
 
-            while (Instant.now().isBefore(deadline)) {
+            while (true) {
                 iteration++;
                 try {
                     runSampleQuery(pool, iteration);
@@ -32,8 +32,11 @@ public final class App {
                 }
 
                 Instant next = start.plus(INTERVAL.multipliedBy(iteration));
+                if (!next.isBefore(deadline)) {
+                    break;
+                }
                 long sleepMs = Duration.between(Instant.now(), next).toMillis();
-                if (sleepMs > 0 && next.isBefore(deadline)) {
+                if (sleepMs > 0) {
                     Thread.sleep(sleepMs);
                 }
             }
