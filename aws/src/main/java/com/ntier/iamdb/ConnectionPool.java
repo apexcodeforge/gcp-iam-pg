@@ -43,6 +43,13 @@ public final class ConnectionPool implements AutoCloseable {
         // is the production setting.
         hc.addDataSourceProperty("sslmode", "require");
 
+        // Optional: pin the search_path so unqualified table refs resolve in
+        // the right schema. If unset, Postgres uses the role's default
+        // (`"$user", public`).
+        if (cfg.schema() != null && !cfg.schema().isBlank()) {
+            hc.addDataSourceProperty("currentSchema", cfg.schema());
+        }
+
         hc.setMaximumPoolSize(cfg.maxPoolSize());
         hc.setMinimumIdle(cfg.minIdle());
 
@@ -79,6 +86,7 @@ public final class ConnectionPool implements AutoCloseable {
             String dbUser,
             String region,
             String awsProfile,  // optional; null/blank = default chain
+            String schema,      // optional; null/blank = role default search_path
             int maxPoolSize,
             int minIdle
     ) {
@@ -90,6 +98,7 @@ public final class ConnectionPool implements AutoCloseable {
                     required("DB_IAM_USER"),
                     required("AWS_REGION"),
                     System.getenv("AWS_PROFILE"),
+                    System.getenv("DB_SCHEMA"),
                     intEnv("DB_POOL_MAX", 10),
                     intEnv("DB_POOL_MIN_IDLE", 2)
             );

@@ -92,6 +92,9 @@ Optional knobs:
   also propagates it to the `aws.profile` system property at startup so the
   wrapper picks it up regardless of how the JVM was launched. Leave unset to
   fall through to env-var keys, instance metadata, etc.
+- `DB_SCHEMA` — pins `currentSchema` on each connection so unqualified table
+  references resolve in your schema. Leave unset to use the role's default
+  `search_path` (`"$user", public`).
 - `DB_POOL_MAX` (default `10`)
 - `DB_POOL_MIN_IDLE` (default `2`)
 
