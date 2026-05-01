@@ -87,6 +87,11 @@ Or the equivalent `export` lines in bash.
 
 Optional knobs:
 
+- `AWS_PROFILE` — selects a named profile from `~/.aws/credentials` /
+  `~/.aws/config`. Honored by the default credentials provider chain; the app
+  also propagates it to the `aws.profile` system property at startup so the
+  wrapper picks it up regardless of how the JVM was launched. Leave unset to
+  fall through to env-var keys, instance metadata, etc.
 - `DB_POOL_MAX` (default `10`)
 - `DB_POOL_MIN_IDLE` (default `2`)
 

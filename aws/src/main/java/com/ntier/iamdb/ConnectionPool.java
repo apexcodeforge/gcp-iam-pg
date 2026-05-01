@@ -12,6 +12,14 @@ public final class ConnectionPool implements AutoCloseable {
     private final HikariDataSource ds;
 
     public ConnectionPool(DbConfig cfg) {
+        // The AWS SDK's DefaultCredentialsProvider resolves `aws.profile`
+        // (system property) and AWS_PROFILE (env) when picking a profile.
+        // Set the sysprop here so the wrapper sees it on the first connect,
+        // regardless of how the JVM was launched.
+        if (cfg.awsProfile() != null && !cfg.awsProfile().isBlank()) {
+            System.setProperty("aws.profile", cfg.awsProfile());
+        }
+
         HikariConfig hc = new HikariConfig();
 
         // The aws-wrapper:postgresql:// scheme tells the AWS Advanced JDBC
@@ -70,6 +78,7 @@ public final class ConnectionPool implements AutoCloseable {
             String database,
             String dbUser,
             String region,
+            String awsProfile,  // optional; null/blank = default chain
             int maxPoolSize,
             int minIdle
     ) {
@@ -80,6 +89,7 @@ public final class ConnectionPool implements AutoCloseable {
                     required("DB_NAME"),
                     required("DB_IAM_USER"),
                     required("AWS_REGION"),
+                    System.getenv("AWS_PROFILE"),
                     intEnv("DB_POOL_MAX", 10),
                     intEnv("DB_POOL_MIN_IDLE", 2)
             );
