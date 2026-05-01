@@ -58,6 +58,18 @@
             <artifactId>sts</artifactId>
         </dependency>
 
+        <!-- Required to resolve SSO-based profiles (sso_session / sso_start_url
+             entries in ~/.aws/config). The SDK loads these clients lazily, so
+             without them ProfileCredentialsProvider throws at first use. -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sso</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ssooidc</artifactId>
+        </dependency>
+
         <!-- HikariCP connection pool -->
         <dependency>
             <groupId>com.zaxxer</groupId>
